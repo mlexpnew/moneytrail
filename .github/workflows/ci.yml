@@ -1,0 +1,37 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - run: ruff check . && ruff format --check .
+      - run: pytest -q
+      - name: Benchmark gate (every planted case caught for the right reason, precision >= 50%)
+        run: python -m moneytrail.evaluate --gate
+      - run: cat eval_results/report.md >> "$GITHUB_STEP_SUMMARY"
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: docker build -t moneytrail .
+      - name: Smoke test
+        run: |
+          pip install -e . -q
+          moneytrail demo --out demo
+          docker run -d --name mt -p 8000:8000 -e MONEYTRAIL_API_KEYS=k moneytrail
+          for i in $(seq 1 30); do curl -sf localhost:8000/health && break; sleep 1; done
+          curl -sf -H 'X-API-Key: k' -F customers=@demo/customers.csv -F transactions=@demo/transactions.csv \
+            localhost:8000/v1/scan | python -c "import sys,json; b=json.load(sys.stdin); assert b['cases'], b; print(b['alerts'], 'alerts')"
