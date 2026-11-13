@@ -2,12 +2,12 @@ from pathlib import Path
 
 import pytest
 
-from moneytrail.evaluate import run
+from workbridge.evaluate import run
 
 
 def test_dev_benchmark():
     r = run("dev")
-    m, b = r["moneytrail"], r["threshold_rules"]
+    m, b = r["workbridge"], r["threshold_rules"]
     assert m["caught_with_right_reason"] == r["suspicious_planted"]
     assert m["alerts"] < b["alerts"] / 100 and m["precision"] > 10 * b["precision"]
 
@@ -17,8 +17,8 @@ def test_api(tmp_path):
     pytest.importorskip("multipart")
     from fastapi.testclient import TestClient
 
-    from moneytrail.api import app
-    from moneytrail.synth import WATCHLIST, dataset
+    from workbridge.api import app
+    from workbridge.synth import WATCHLIST, dataset
 
     C, T, _ = dataset("dev")
     c = TestClient(app)

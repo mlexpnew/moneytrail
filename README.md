@@ -1,21 +1,21 @@
-# MoneyTrail
+# WorkBridge Compliance AI System
 
-![CI](https://github.com/mlexpnew/moneytrail/actions/workflows/ci.yml/badge.svg?branch=main)
+![CI](https://github.com/mlexpnew/WorkBridge_Compliance_AI_System/actions/workflows/ci.yml/badge.svg?branch=main)
 
 **Anti-money-laundering transaction monitoring for Indian NBFCs, small finance and cooperative banks, and payment companies: alerts that explain themselves, one ranked case per customer, and the FIU-IND reports drafted.**
 
-Every reporting entity under PMLA must monitor transactions, file a Suspicious Transaction Report (STR) with FIU-IND within 7 working days of concluding something is suspicious, and send Cash Transaction Reports and Cross-Border Wire Transfer Reports every month. Most small institutions do this with threshold rules ("flag anything over ₹1 lakh"). Analysts drown in alerts about salaries and home purchases, while real patterns, such as mule accounts passing money through in hours, cash split to stay under limits, or funds going round in a circle, never cross a single threshold. MoneyTrail looks for the patterns instead.
+Every reporting entity under PMLA must monitor transactions, file a Suspicious Transaction Report (STR) with FIU-IND within 7 working days of concluding something is suspicious, and send Cash Transaction Reports and Cross-Border Wire Transfer Reports every month. Most small institutions do this with threshold rules ("flag anything over ₹1 lakh"). Analysts drown in alerts about salaries and home purchases, while real patterns, such as mule accounts passing money through in hours, cash split to stay under limits, or funds going round in a circle, never cross a single threshold. WorkBridge looks for the patterns instead.
 
 ## Results
 
-`python -m moneytrail.evaluate` simulates six months for 2,500 customers (about 420,000 transactions). Most are honest, and plenty look alarming to threshold rules: salaries above ₹1 lakh a month, home purchases by RTGS, shops paid by dozens of UPI customers a day, exporters wiring money abroad. A known set of customers follow laundering typologies. The **held-out** book has stealthier versions (smaller structuring, slower mule flows, four-party circles, other name spellings), was fixed before any detector was written, and was run once.
+`python -m workbridge.evaluate` simulates six months for 2,500 customers (about 420,000 transactions). Most are honest, and plenty look alarming to threshold rules: salaries above ₹1 lakh a month, home purchases by RTGS, shops paid by dozens of UPI customers a day, exporters wiring money abroad. A known set of customers follow laundering typologies. The **held-out** book has stealthier versions (smaller structuring, slower mule flows, four-party circles, other name spellings), was fixed before any detector was written, and was run once.
 
 | dev / held-out | Alerts to review | Customers flagged | Suspicious caught | Honest customers flagged | Real cases in the top 50 |
 |---|---|---|---|---|---|
 | Threshold rules (what this repo used to do) | 35,143 / 35,367 | 1,878 / 1,857 | 49/52 / 44/47 | 1,829 / 1,813 | 3 / 2 |
-| **MoneyTrail** | **128 / 96** | **80 / 59** | **52/52 / 44/47** | **28 / 15** | **46 / 44** |
+| **WorkBridge** | **128 / 96** | **80 / 59** | **52/52 / 44/47** | **28 / 15** | **46 / 44** |
 
-Threshold rules only "catch" suspicious customers by flagging three quarters of the book. MoneyTrail catches the same or more, **each with the right reason**, with about 1/300th of the alerts. 65% (dev) and 75% (held-out) of the customers it flags are real cases, against 2 to 3% for threshold rules. An analyst who opens the top 50 cases finds 46 and 44 real ones, against 3 and 2.
+Threshold rules only "catch" suspicious customers by flagging three quarters of the book. WorkBridge catches the same or more, **each with the right reason**, with about 1/300th of the alerts. 65% (dev) and 75% (held-out) of the customers it flags are real cases, against 2 to 3% for threshold rules. An analyst who opens the top 50 cases finds 46 and 44 real ones, against 3 and 2.
 
 | Typology (red flag) | Dev: caught for the right reason | Held-out |
 |---|---|---|
@@ -49,7 +49,7 @@ Watchlist matching made 0 false matches in both sets, rejecting close look-alike
 | **Deployment** | Docker inside the client's network; reads core-banking CSV or Excel exports; no customer data leaves |
 | **Control** | Thresholds in code are reviewable and versioned; every alert carries its evidence; the final decision and the STR stay with the principal officer |
 
-**ROI example** (illustrative): at the alert volumes above, an analyst clearing 60 alerts a day needs 585 days for six months of threshold-rule alerts and about 2 days for MoneyTrail's. Even if real-world precision is a third of the benchmark, a two-person AML team can review every case properly instead of sampling, and missed-STR risk falls with it.
+**ROI example** (illustrative): at the alert volumes above, an analyst clearing 60 alerts a day needs 585 days for six months of threshold-rule alerts and about 2 days for WorkBridge's. Even if real-world precision is a third of the benchmark, a two-person AML team can review every case properly instead of sampling, and missed-STR risk falls with it.
 
 | Plan (suggested) | For | Price idea |
 |---|---|---|
@@ -57,7 +57,7 @@ Watchlist matching made 0 false matches in both sets, rejecting close look-alike
 | Growth | Up to 5 lakh accounts | Daily scans, case queue for the team, STR drafts |
 | Enterprise | Larger institutions | Annual licence, on-premise, custom typologies, model-risk documentation |
 
-**Pilot plan (4 weeks):** run MoneyTrail on the client's last 6 months of transactions next to their current system. Compare alert volumes, the cases each found, and the STRs they actually filed. The client sees the workload change and any patterns their rules missed, on their own data, before switching.
+**Pilot plan (4 weeks):** run WorkBridge on the client's last 6 months of transactions next to their current system. Compare alert volumes, the cases each found, and the STRs they actually filed. The client sees the workload change and any patterns their rules missed, on their own data, before switching.
 
 ## How it works
 
@@ -89,9 +89,9 @@ flowchart LR
 ```bash
 pip install -e ".[app]" && streamlit run app.py              # dashboard on a sample book
 pip install -e .
-moneytrail demo --out demo                                    # sample customers.csv + transactions.csv
-moneytrail scan demo/customers.csv demo/transactions.csv --out cases.xlsx
-python -m moneytrail.evaluate                                 # benchmark
+workbridge demo --out demo                                    # sample customers.csv + transactions.csv
+workbridge scan demo/customers.csv demo/transactions.csv --out cases.xlsx
+python -m workbridge.evaluate                                 # benchmark
 docker compose up -d                                          # API :8000 + dashboard :8501
 ```
 
@@ -113,11 +113,11 @@ docker compose up -d                                          # API :8000 + dash
 ## Project layout
 
 ```
-src/moneytrail/detect.py    eight typology detectors, name matching, rules in one place
-src/moneytrail/cases.py     cases ranked by risk, CTR, cross-border report, draft STR
-src/moneytrail/io.py        core-banking CSV / Excel import with column mapping
-src/moneytrail/synth.py     six-month book with planted typologies (dev + held-out)
-src/moneytrail/evaluate.py  benchmark vs threshold rules, CI gate
-src/moneytrail/api.py       FastAPI service
+src/workbridge/detect.py    eight typology detectors, name matching, rules in one place
+src/workbridge/cases.py     cases ranked by risk, CTR, cross-border report, draft STR
+src/workbridge/io.py        core-banking CSV / Excel import with column mapping
+src/workbridge/synth.py     six-month book with planted typologies (dev + held-out)
+src/workbridge/evaluate.py  benchmark vs threshold rules, CI gate
+src/workbridge/api.py       FastAPI service
 app.py                      Streamlit case queue and reports
 ```

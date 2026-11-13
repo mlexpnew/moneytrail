@@ -1,17 +1,17 @@
-"""MoneyTrail dashboard.  streamlit run app.py"""
+"""WorkBridge dashboard.  streamlit run app.py"""
 
 from __future__ import annotations
 
 import pandas as pd
 import streamlit as st
 
-from moneytrail.cases import build_cases, cbwtr, ctr, str_draft
-from moneytrail.detect import Rules, run_all
-from moneytrail.io import load_customers, load_transactions
-from moneytrail.synth import WATCHLIST, dataset
+from workbridge.cases import build_cases, cbwtr, ctr, str_draft
+from workbridge.detect import Rules, run_all
+from workbridge.io import load_customers, load_transactions
+from workbridge.synth import WATCHLIST, dataset
 
-st.set_page_config(page_title="MoneyTrail", page_icon="🔎", layout="wide")
-st.title("MoneyTrail")
+st.set_page_config(page_title="WorkBridge", page_icon="🔎", layout="wide")
+st.title("WorkBridge")
 st.caption(
     "AML transaction monitoring: explainable alerts, one ranked case per customer, "
     "CTR and cross-border reports, draft STRs for analyst review."

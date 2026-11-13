@@ -1,7 +1,7 @@
 import pandas as pd
 
-from moneytrail.cases import build_cases, cbwtr, ctr, str_draft
-from moneytrail.detect import (
+from workbridge.cases import build_cases, cbwtr, ctr, str_draft
+from workbridge.detect import (
     Rules,
     ctr_avoidance,
     dormant,
@@ -13,7 +13,7 @@ from moneytrail.detect import (
     structuring,
     watchlist,
 )
-from moneytrail.io import load_transactions
+from workbridge.io import load_transactions
 
 COLS = [
     "txn_id",

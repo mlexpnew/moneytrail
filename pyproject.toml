@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "moneytrail"
+name = "workbridge"
 version = "1.0.0"
 description = "AML transaction monitoring with explainable alerts and a ranked case queue"
 readme = "README.md"
@@ -18,7 +18,7 @@ dev = ["pytest>=8", "ruff>=0.5", "httpx>=0.27", "fastapi>=0.110", "python-multip
        "streamlit>=1.35"]
 
 [project.scripts]
-moneytrail = "moneytrail.cli:main"
+workbridge = "workbridge.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

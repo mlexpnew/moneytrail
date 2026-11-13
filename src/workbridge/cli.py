@@ -1,8 +1,8 @@
 """Command line.
 
-moneytrail scan customers.csv transactions.csv --out cases.xlsx
-moneytrail demo --out demo/          # write a sample book (customers + transactions)
-moneytrail bench                     # run the benchmark
+workbridge scan customers.csv transactions.csv --out cases.xlsx
+workbridge demo --out demo/          # write a sample book (customers + transactions)
+workbridge bench                     # run the benchmark
 """
 
 from __future__ import annotations
@@ -23,13 +23,13 @@ def scan(C: pd.DataFrame, T: pd.DataFrame, watchlist: list[str] | None = None):
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(prog="moneytrail")
+    ap = argparse.ArgumentParser(prog="workbridge")
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("scan")
     s.add_argument("customers")
     s.add_argument("transactions")
     s.add_argument("--watchlist", help="text file, one name per line")
-    s.add_argument("--out", default="moneytrail_cases.xlsx")
+    s.add_argument("--out", default="workbridge_cases.xlsx")
     d = sub.add_parser("demo")
     d.add_argument("--out", default="demo")
     sub.add_parser("bench")

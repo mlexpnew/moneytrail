@@ -1,6 +1,6 @@
 """HTTP API: upload a day's (or month's) book, get the ranked case queue and reports.
 
-uvicorn moneytrail.api:app        # set MONEYTRAIL_API_KEYS to require X-API-Key
+uvicorn workbridge.api:app        # set WORKBRIDGE_API_KEYS to require X-API-Key
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from .detect import Rules, run_all
 from .io import load_customers, load_transactions
 
 app = FastAPI(
-    title="MoneyTrail",
+    title="WorkBridge",
     version="1.0.0",
     description="AML transaction monitoring with explainable alerts and a ranked case queue.",
 )
@@ -25,7 +25,7 @@ RUNS: dict[str, dict] = {}
 
 
 def auth(x_api_key: str | None = Header(default=None)):
-    keys = {k.strip() for k in os.getenv("MONEYTRAIL_API_KEYS", "").split(",") if k.strip()}
+    keys = {k.strip() for k in os.getenv("WORKBRIDGE_API_KEYS", "").split(",") if k.strip()}
     if keys and x_api_key not in keys:
         raise HTTPException(401, "missing or invalid X-API-Key")
 

@@ -1,9 +1,9 @@
-"""Benchmark MoneyTrail against threshold rules (what this repo used to do).
+"""Benchmark WorkBridge against threshold rules (what this repo used to do).
 
-    python -m moneytrail.evaluate --gate
+    python -m workbridge.evaluate --gate
 
 Threshold rules: alert on any transaction over ₹1 lakh and any transfer with a high-risk
-country. MoneyTrail: typology detectors, one case per customer, ranked by risk.
+country. WorkBridge: typology detectors, one case per customer, ranked by risk.
 Scored per customer: suspicious customers caught (with the right reason), honest customers
 flagged, alerts an analyst must open, and how many real cases sit in the top of the queue.
 """
@@ -53,7 +53,7 @@ def run(which: str) -> dict:
         "customers": len(C),
         "transactions": len(T),
         "suspicious_planted": len(sus),
-        "moneytrail": {
+        "workbridge": {
             "alerts": len(alerts),
             "customers_flagged": len(flagged),
             "suspicious_caught": len(sus & set(flagged)),
@@ -89,7 +89,7 @@ def report(r: dict) -> str:
     rows = []
     for key, label in (
         ("threshold_rules", "Threshold rules (old repo)"),
-        ("moneytrail", "**MoneyTrail**"),
+        ("workbridge", "**WorkBridge**"),
     ):
         a, b = d[key], h[key]
         rows.append(
@@ -134,7 +134,7 @@ def report(r: dict) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description="Benchmark MoneyTrail")
+    p = argparse.ArgumentParser(description="Benchmark WorkBridge")
     p.add_argument("--out", default="eval_results")
     p.add_argument("--gate", action="store_true")
     a = p.parse_args(argv)
@@ -146,7 +146,7 @@ def main(argv: list[str] | None = None) -> int:
     (out / "report.md").write_text(md)
     print(md)
     if a.gate:
-        m = r["dev"]["moneytrail"]
+        m = r["dev"]["workbridge"]
         if m["caught_with_right_reason"] < r["dev"]["suspicious_planted"] or m["precision"] < 0.5:
             print("gate failed", file=sys.stderr)
             return 1

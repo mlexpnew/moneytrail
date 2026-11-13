@@ -4,7 +4,7 @@ services:
     build: .
     ports: ["8000:8000"]
     environment:
-      MONEYTRAIL_API_KEYS: ${MONEYTRAIL_API_KEYS:-change-me}
+      WORKBRIDGE_API_KEYS: ${WORKBRIDGE_API_KEYS:-change-me}
     restart: unless-stopped
   dashboard:
     build: .

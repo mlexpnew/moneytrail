@@ -7,4 +7,4 @@ COPY app.py ./
 ENV PYTHONUNBUFFERED=1
 EXPOSE 8000 8501
 HEALTHCHECK --interval=30s --timeout=5s CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
-CMD ["uvicorn", "moneytrail.api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "workbridge.api:app", "--host", "0.0.0.0", "--port", "8000"]
